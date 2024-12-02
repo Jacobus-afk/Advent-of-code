@@ -41,9 +41,25 @@ func incDecCheck(numbers []int) bool {
 func GetSafeReports(reportList [][]int) int {
 	safeReports := 0
 	for _, report := range reportList {
+		// fmt.Printf("trying %d\n", report)
 		if incDecCheck(report) {
+			// fmt.Println("Safe")
+      // fmt.Printf("report: %d\n", report)
 			safeReports++
+		} else {
+			for i := 0; i < len(report); i++ {
+        poppedreport := make([]int, len(report))
+        _ = copy(poppedreport, report)
+				poppedreport = append(poppedreport[:i], poppedreport[i+1:]...)
+        // fmt.Printf("original report: %d, trying %d\n", report, poppedreport)
+				if incDecCheck(poppedreport) {
+					// fmt.Println("Safe")
+					safeReports++
+					break
+				}
+			}
 		}
+
 	}
 	return safeReports
 }
@@ -67,7 +83,7 @@ func main() {
 		reportList = append(reportList, reportEntry)
 	}
 
-  safeReport := GetSafeReports(reportList)
+	safeReport := GetSafeReports(reportList)
 
-  fmt.Println(safeReport)
+	fmt.Println(safeReport)
 }
