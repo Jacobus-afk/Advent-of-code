@@ -52,3 +52,13 @@ func TestAddValidInstructions(t *testing.T) {
     t.Errorf("got %d, want %d", got, want)
   }
 }
+
+func TestRemoveConditionalStatements(t *testing.T) {
+  got := removeConditionalStatements("xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))")
+
+  want := "xmul(2,4)&mul[3,7]!^?mul(8,5))"
+
+  if got != want {
+    t.Errorf("got %s, want %s", got, want)
+  }
+}

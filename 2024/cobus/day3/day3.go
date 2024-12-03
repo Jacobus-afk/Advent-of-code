@@ -51,7 +51,7 @@ func AddValidInstructions(data string) int {
 	matchedPatternReg := findInstructionPattern(data)
 	tally := 0
 
-	for _, match := range matchedPatternReg {
+for _, match := range matchedPatternReg {
 		val := multiplyValidInstruction(match)
 
 		if val == -1 {
@@ -71,9 +71,33 @@ func AddValidInstructions(data string) int {
 	return tally
 }
 
+func removeConditionalStatements(data string) string {
+  validData := ""
+	// fmt.Println(data)
+	for {
+		startPos := strings.Index(data, "don't()")
+		if startPos < 0 {
+      validData += data
+			break
+		}
+    validData += data[:startPos]
+		data = data[startPos+4:]
+
+		endPos := strings.Index(data, "do()")
+		if endPos < 0 {
+			break
+		}
+		// fmt.Printf("startpos %d, endpos %d\n", startPos, endPos)
+    data = data[endPos+4:]
+	}
+
+	return validData
+}
+
 func main() {
 	lineReg := []string{}
-	tally := 0
+  allInstr := ""
+	// tally := 0
 	file, _ := os.Open("./data")
 	defer file.Close()
 
@@ -83,8 +107,16 @@ func main() {
 		lineReg = append(lineReg, line)
 	}
 	for _, instr := range lineReg {
-		sum := AddValidInstructions(instr)
-		tally += sum
+    allInstr += instr
+		// tally += sum
 	}
-	fmt.Println(tally)
+  sum := AddValidInstructions(allInstr)
+	fmt.Println(sum)
+
+
+  treatedInstr := removeConditionalStatements(allInstr)
+  treatedSum := AddValidInstructions(treatedInstr)
+  fmt.Println(treatedSum)
+
+
 }
