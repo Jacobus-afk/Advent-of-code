@@ -12,6 +12,84 @@ type wordCoords struct {
 	coordinates [2]int
 }
 
+var wordsCoordsMAS = [4][4]wordCoords{
+	{
+		wordCoords{
+			character:   'M',
+			coordinates: [2]int{-1, -1},
+		},
+		wordCoords{
+			character:   'S',
+			coordinates: [2]int{1, -1},
+		},
+		wordCoords{
+			character:   'M',
+			coordinates: [2]int{-1, 1},
+		},
+		wordCoords{
+			character:   'S',
+			coordinates: [2]int{1, 1},
+		},
+	},
+
+	{
+		wordCoords{
+			character:   'M',
+			coordinates: [2]int{-1, 1},
+		},
+		wordCoords{
+			character:   'S',
+			coordinates: [2]int{-1, -1},
+		},
+		wordCoords{
+			character:   'M',
+			coordinates: [2]int{1, 1},
+		},
+		wordCoords{
+			character:   'S',
+			coordinates: [2]int{1, -1},
+		},
+	},
+
+	{
+		wordCoords{
+			character:   'M',
+			coordinates: [2]int{1, -1},
+		},
+		wordCoords{
+			character:   'S',
+			coordinates: [2]int{-1, -1},
+		},
+		wordCoords{
+			character:   'M',
+			coordinates: [2]int{1, 1},
+		},
+		wordCoords{
+			character:   'S',
+			coordinates: [2]int{-1, 1},
+		},
+	},
+
+	{
+		wordCoords{
+			character:   'M',
+			coordinates: [2]int{-1, -1},
+		},
+		wordCoords{
+			character:   'S',
+			coordinates: [2]int{-1, 1},
+		},
+		wordCoords{
+			character:   'M',
+			coordinates: [2]int{1, -1},
+		},
+		wordCoords{
+			character:   'S',
+			coordinates: [2]int{1, 1},
+		},
+	},
+}
+
 var wordsCoordsXMAS = [8][3]wordCoords{
 	{
 		wordCoords{
@@ -134,7 +212,7 @@ var wordsCoordsXMAS = [8][3]wordCoords{
 	},
 }
 
-func checkWordCoords(xpos, ypos int, grid []string, coordReg [3]wordCoords) bool {
+func checkWordCoords(xpos, ypos int, grid []string, coordReg []wordCoords) bool {
 	xcoord := -1
 	ycoord := -1
 	line := ""
@@ -164,7 +242,20 @@ func findWordXMAS(xpos, ypos int, grid []string) int {
 	// wordCordList := [2][3]wordCoords{wordsCoords[6], wordsCoords[7]}
 
 	for _, coordReg := range wordsCoordsXMAS {
-		if foundWord := checkWordCoords(xpos, ypos, grid, coordReg); foundWord {
+    if foundWord := checkWordCoords(xpos, ypos, grid, coordReg[:]); foundWord {
+			foundWords++
+		}
+	}
+
+	return foundWords
+}
+
+func findWordMAS(xpos, ypos int, grid []string) int {
+	foundWords := 0
+	// wordCordList := [2][3]wordCoords{wordsCoords[6], wordsCoords[7]}
+
+	for _, coordReg := range wordsCoordsMAS {
+    if foundWord := checkWordCoords(xpos, ypos, grid, coordReg[:]); foundWord {
 			foundWords++
 		}
 	}
@@ -187,6 +278,21 @@ func WordSearchXMAS(grid []string) int {
 	return totalWordsFound
 }
 
+func WordSearchMAS(grid []string) int {
+	totalWordsFound := 0
+
+	for ypos, line := range grid {
+		for xpos := 0; xpos < len(line); xpos++ {
+			if line[xpos] == 'A' {
+				if foundWords := findWordMAS(xpos, ypos, grid); foundWords > 0 {
+					totalWordsFound += foundWords
+				}
+			}
+		}
+	}
+	return totalWordsFound
+}
+
 func main() {
 	lineReg := []string{}
 
@@ -199,6 +305,8 @@ func main() {
 		lineReg = append(lineReg, line)
 	}
 
-  totalWords := WordSearchXMAS(lineReg)
-  fmt.Println(totalWords)
+	totalXMASWords := WordSearchXMAS(lineReg)
+	totalMASWords := WordSearchMAS(lineReg)
+	fmt.Println(totalXMASWords)
+	fmt.Println(totalMASWords)
 }
