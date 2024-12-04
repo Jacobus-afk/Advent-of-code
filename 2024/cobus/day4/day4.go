@@ -12,7 +12,7 @@ type wordCoords struct {
 	coordinates [2]int
 }
 
-var wordsCoords = [8][3]wordCoords{
+var wordsCoordsXMAS = [8][3]wordCoords{
 	{
 		wordCoords{
 			character:   'M',
@@ -159,11 +159,11 @@ func checkWordCoords(xpos, ypos int, grid []string, coordReg [3]wordCoords) bool
 	return true
 }
 
-func findWord(xpos, ypos int, grid []string) int {
+func findWordXMAS(xpos, ypos int, grid []string) int {
 	foundWords := 0
 	// wordCordList := [2][3]wordCoords{wordsCoords[6], wordsCoords[7]}
 
-	for _, coordReg := range wordsCoords {
+	for _, coordReg := range wordsCoordsXMAS {
 		if foundWord := checkWordCoords(xpos, ypos, grid, coordReg); foundWord {
 			foundWords++
 		}
@@ -172,13 +172,13 @@ func findWord(xpos, ypos int, grid []string) int {
 	return foundWords
 }
 
-func WordSearch(grid []string) int {
+func WordSearchXMAS(grid []string) int {
 	totalWordsFound := 0
 
 	for ypos, line := range grid {
 		for xpos := 0; xpos < len(line); xpos++ {
 			if line[xpos] == 'X' {
-				if foundWords := findWord(xpos, ypos, grid); foundWords > 0 {
+				if foundWords := findWordXMAS(xpos, ypos, grid); foundWords > 0 {
 					totalWordsFound += foundWords
 				}
 			}
@@ -199,6 +199,6 @@ func main() {
 		lineReg = append(lineReg, line)
 	}
 
-  totalWords := WordSearch(lineReg)
+  totalWords := WordSearchXMAS(lineReg)
   fmt.Println(totalWords)
 }
