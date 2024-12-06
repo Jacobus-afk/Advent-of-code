@@ -93,20 +93,49 @@ func checkValidOrdering(pages []int, orderingRuleMaps [2]map[int][]int) bool {
 	return true
 }
 
-func GetValidMiddlePages(pageUpdates [][]int, orderingRuleMaps [2]map[int][]int) int {
+func fixInvalidOrdering(pages []int, orderingRuleMaps [2]map[int][]int) []int {
+	rightMap := orderingRuleMaps[0]
+	wrongMap := orderingRuleMaps[1]
+  // fmt.Printf("invalid pages: %d\n", pages)
+
+  for i := 1; i < len(pages); i++ {
+		beforePage := pages[i-1]
+		afterPage := pages[i]
+
+		if findPageInRule(rightMap, beforePage, afterPage) {
+			continue
+		}
+		if findPageInRule(wrongMap, beforePage, afterPage) {
+      // tmp := pages[i-1]
+      fmt.Printf("sanitycheck pageBefore %d, pageAfter %d\n", pages[i-1], pages[i])
+      pages[i-1] = afterPage
+      pages[i] = beforePage
+      fmt.Printf("sanitycheck pageBefore %d, pageAfter %d\n\n", pages[i-1], pages[i])
+      i = 0
+		}
+  }
+
+  return pages
+}
+
+func GetValidMiddlePages(pageUpdates [][]int, orderingRuleMaps [2]map[int][]int) (int, int) {
 	sum := 0
+  invalidSum := 0
 	for _, pages := range pageUpdates {
 		if checkValidOrdering(pages, orderingRuleMaps) {
 			middleVal := pages[len(pages)/2]
 			sum += middleVal
 			// fmt.Printf("middleVal: %d\n", middleVal)
-		}
+		} else {
+      fmt.Println(pages)
+      fixedPage := fixInvalidOrdering(pages, orderingRuleMaps)
+      fmt.Printf("%d\n\n", fixedPage)
+      // fmt.Println(len(fixedPage)%2 == 0)
+      fixedPageMiddleVal := fixedPage[len(fixedPage)/2]
+      invalidSum += fixedPageMiddleVal
+    }
 	}
-	return sum
-}
-
-func FixInvalidMiddlePages(pageUpdates [][]int, orderingRuleMaps [2]map[int][]int) int {
-	return 0
+	return sum, invalidSum
 }
 
 func main() {
@@ -147,6 +176,7 @@ func main() {
 	}
 	// fmt.Println(pageUpdates)
 
-	sum := GetValidMiddlePages(pageUpdates, orderingRuleMaps)
+	sum, invalidSum := GetValidMiddlePages(pageUpdates, orderingRuleMaps)
 	fmt.Println(sum)
+  fmt.Println(invalidSum)
 }

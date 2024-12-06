@@ -25,7 +25,7 @@ func TestFindValidOrdering(t *testing.T) {
 	})
 
   t.Run("sum of valid middle pages", func(t *testing.T) {
-    got := GetValidMiddlePages([][]int{
+    gotValid,  gotInvalid:= GetValidMiddlePages([][]int{
       {75,47,61,53,29},
       {97,61,53,29,13},
       {75,29,13},
@@ -34,11 +34,15 @@ func TestFindValidOrdering(t *testing.T) {
       {97,13,75,29,47},
     }, orderingRuleMaps)
 
-    want := 143
+    wantValid := 143
+    wantInvalid := 123
 
-    if got != want {
-      t.Errorf("got %d, want %d", got, want)
+    if gotValid != wantValid {
+      t.Errorf("got %d, want %d", gotValid, wantValid)
     }
 
+    if gotInvalid != wantInvalid {
+      t.Errorf("got %d, want %d", gotInvalid, wantInvalid)
+    }
   })
 }
