@@ -92,7 +92,7 @@ func TestFindLoops(t *testing.T) {
 
   got := FindLoops(grid, startPosition, direction)
 
-  want := 8
+  want := 6
 
   if got != want {
     t.Errorf("got %d, want %d", got, want)
