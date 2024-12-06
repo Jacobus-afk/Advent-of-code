@@ -12,7 +12,7 @@ func TestGuardPositions(t *testing.T) {
 		// fmt.Printf("xpos: %d, direction: %d\n", xpos, direction)
 		// startPosition := [2]int{xpos, 0}
 
-		got := TrackMovement(grid, startPosition, direction)
+		got, _ := TrackMovement(grid, startPosition, direction)
 
 		want := 9
 
@@ -35,10 +35,10 @@ func TestGuardPositions(t *testing.T) {
 			"......#...",
 		}
 
-    startPosition, direction := getStartingPosition(grid)
+	   startPosition, direction := getStartingPosition(grid)
 		// fmt.Printf("pos: %d, direction: %d\n", startPosition, direction)
 
-		got := TrackMovement(grid, startPosition, direction)
+		got, _ := TrackMovement(grid, startPosition, direction)
 
 		want := 41
 
@@ -46,4 +46,55 @@ func TestGuardPositions(t *testing.T) {
 			t.Errorf("got %d, want %d", got, want)
 		}
 	})
+
+	// t.Run("potential obstruction placement", func(t *testing.T) {
+	// 	grid := []string{
+	// 		"....#.....",
+	// 		".........#",
+	// 		"..........",
+	// 		"..#.......",
+	// 		".......#..",
+	// 		"..........",
+	// 		".#..^.....",
+	// 		"........#.",
+	// 		"#.........",
+	// 		"......#...",
+	// 	}
+	//
+	//    startPosition, direction := getStartingPosition(grid)
+	// 	// fmt.Printf("pos: %d, direction: %d\n", startPosition, direction)
+	//
+	// 	_, got := TrackMovement(grid, startPosition, direction)
+	//
+	// 	want := 41
+	//
+	// 	if got != want {
+	// 		t.Errorf("got %d, want %d", got, want)
+	// 	}
+	// })
+}
+
+func TestFindLoops(t *testing.T) {
+	grid := []string{
+		"....#.....",
+		".........#",
+		"..........",
+		"..#.......",
+		".......#..",
+		"..........",
+		".#..^.....",
+		"........#.",
+		"#.........",
+		"......#...",
+	}
+
+  startPosition, direction := getStartingPosition(grid)
+
+  got := FindLoops(grid, startPosition, direction)
+
+  want := 8
+
+  if got != want {
+    t.Errorf("got %d, want %d", got, want)
+  }
 }
