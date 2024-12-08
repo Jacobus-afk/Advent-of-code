@@ -39,20 +39,20 @@ func getNodePos(pos, dir, gridLen [2]int) ([2]int, error) {
 
 func calculateAntinodePositions(
 	refRecordPos, compareRecordPos, antinodeDirForRef, antinodeDirForCompare, gridLen [2]int,
-	antinodeMap map[[2]int]bool,
+	antinodeMap map[[2]int]string, char rune,
 ) {
 	refNode, err := getNodePos(refRecordPos, antinodeDirForRef, gridLen)
 	if err == nil {
-		antinodeMap[refNode] = true
+		antinodeMap[refNode] = string(char)
 	}
 
 	refNode, err = getNodePos(compareRecordPos, antinodeDirForCompare, gridLen)
 	if err == nil {
-		antinodeMap[refNode] = true
+		antinodeMap[refNode] = string(char)
 	}
 }
 
-func mapAntinodes(nodeRecord [][2]int, antinodeMap map[[2]int]bool, gridLen [2]int) {
+func mapAntinodes(nodeRecord [][2]int, antinodeMap map[[2]int]string, gridLen [2]int, char rune) {
 	for num, refRecordPos := range nodeRecord[:len(nodeRecord)-1] {
 		for _, compareRecordPos := range nodeRecord[num+1:] {
 			// fmt.Println(refRecordPos, compareRecordPos)
@@ -68,6 +68,7 @@ func mapAntinodes(nodeRecord [][2]int, antinodeMap map[[2]int]bool, gridLen [2]i
 				antinodeDirForCompare,
 				gridLen,
 				antinodeMap,
+				char,
 			)
 
 		}
@@ -78,14 +79,14 @@ func findAntinodes(
 	partGrid []string,
 	char rune,
 	charPos, gridLen [2]int,
-	antinodeMap map[[2]int]bool,
+	antinodeMap map[[2]int]string,
 ) {
 	nodeRecord := [][2]int{charPos}
 
 	for subypos, line := range partGrid {
 		// this wont work if there are more than one of the same char on the same line..
 		for xpos, potentialAntenna := range line {
-			if potentialAntenna != char || subypos == 0 && xpos == charPos[0] {
+			if potentialAntenna != char || (subypos == 0 && xpos == charPos[0]) {
 				// don't want to add first antenna again
 				continue
 			}
@@ -97,14 +98,15 @@ func findAntinodes(
 			// fmt.Println(xpos, ypos)
 
 			nodeRecord = append(nodeRecord, [2]int{xpos, ypos})
-			mapAntinodes(nodeRecord, antinodeMap, gridLen)
+			mapAntinodes(nodeRecord, antinodeMap, gridLen, char)
 		}
 	}
 }
 
 func AntinodeCreation(grid []string) int {
-	antinodeMap := make(map[[2]int]bool)
+	antinodeMap := make(map[[2]int]string)
 	charHandledMap := make(map[rune]bool)
+  fmt.Println(len(grid[0]), len(grid))
 	gridLen := [2]int{len(grid[0]), len(grid)}
 
 	for ypos, line := range grid {
@@ -114,13 +116,17 @@ func AntinodeCreation(grid []string) int {
 			if _, ok := charHandledMap[char]; ok || !alphanumeric.MatchString(string(char)) {
 				continue
 			}
-			fmt.Println(string(char), xpos, ypos)
+			// fmt.Println(string(char), xpos, ypos)
 			charHandledMap[char] = true
 
 			findAntinodes(grid[ypos:], char, [2]int{xpos, ypos}, gridLen, antinodeMap)
 		}
 	}
-	fmt.Println(antinodeMap)
+	// for key, antiNode := range antinodeMap {
+	// 	if antiNode == "J" {
+	// 		fmt.Println(key, antiNode)
+	// 	}
+	// }
 
 	return len(antinodeMap)
 }
@@ -137,7 +143,7 @@ func main() {
 		line := scanner.Text()
 		grid = append(grid, line)
 	}
-  // fmt.Println(grid)
+	// fmt.Println(grid)
 
 	nodes := AntinodeCreation(grid)
 	fmt.Println(nodes)

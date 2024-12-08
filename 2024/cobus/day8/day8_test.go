@@ -71,7 +71,7 @@ func TestAntinodeCreation(t *testing.T) {
 
 	t.Run("multiple antenna types", func(t *testing.T) {
 		grid := []string{
-			"............",
+			"..0.........",
 			"........0...",
 			".....0......",
 			".......0f...",
@@ -87,7 +87,7 @@ func TestAntinodeCreation(t *testing.T) {
 
 		got := AntinodeCreation(grid)
 
-		want := 14
+		want := 18
 		if got != want {
 			t.Errorf("got %d, want %d", got, want)
 		}
