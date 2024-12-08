@@ -41,14 +41,25 @@ func calculateAntinodePositions(
 	refRecordPos, compareRecordPos, antinodeDirForRef, antinodeDirForCompare, gridLen [2]int,
 	antinodeMap map[[2]int]string, char rune,
 ) {
-	refNode, err := getNodePos(refRecordPos, antinodeDirForRef, gridLen)
-	if err == nil {
-		antinodeMap[refNode] = string(char)
+	for {
+		refNode, err := getNodePos(refRecordPos, antinodeDirForRef, gridLen)
+		if err == nil {
+			antinodeMap[refNode] = string(char)
+			copy(refRecordPos[:], refNode[:])
+		} else {
+			break
+		}
 	}
 
-	refNode, err = getNodePos(compareRecordPos, antinodeDirForCompare, gridLen)
-	if err == nil {
-		antinodeMap[refNode] = string(char)
+	for {
+    refNode, err := getNodePos(compareRecordPos, antinodeDirForCompare, gridLen)
+		if err == nil {
+			antinodeMap[refNode] = string(char)
+      copy(compareRecordPos[:], refNode[:])
+		} else {
+			break
+		}
+
 	}
 }
 
@@ -83,6 +94,9 @@ func findAntinodes(
 ) {
 	nodeRecord := [][2]int{charPos}
 
+	// part2
+	antinodeMap[charPos] = string(char)
+
 	for subypos, line := range partGrid {
 		// this wont work if there are more than one of the same char on the same line..
 		for xpos, potentialAntenna := range line {
@@ -98,6 +112,9 @@ func findAntinodes(
 			// fmt.Println(xpos, ypos)
 
 			nodeRecord = append(nodeRecord, [2]int{xpos, ypos})
+			// part 2
+			antinodeMap[[2]int{xpos, ypos}] = string(char)
+			// part 2 done
 			mapAntinodes(nodeRecord, antinodeMap, gridLen, char)
 		}
 	}
@@ -106,7 +123,7 @@ func findAntinodes(
 func AntinodeCreation(grid []string) int {
 	antinodeMap := make(map[[2]int]string)
 	charHandledMap := make(map[rune]bool)
-  fmt.Println(len(grid[0]), len(grid))
+	// fmt.Println(len(grid[0]), len(grid))
 	gridLen := [2]int{len(grid[0]), len(grid)}
 
 	for ypos, line := range grid {
