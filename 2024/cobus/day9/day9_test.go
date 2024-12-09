@@ -29,7 +29,7 @@ func TestCreateChecksum(t *testing.T) {
 	//
 	t.Run("frees up space", func(t *testing.T) {
 		got := []int{0, -1, -1, 1, 1, 1, -1, -1, -1, -1, 2, 2, 2, 2, 2}
-		freeUpSpace(got)
+		freeUpSpaceFragmented(got)
 
 		want := []int{0, 2, 2, 1, 1, 1, 2, 2, 2, -1, -1, -1, -1, -1, -1}
 
@@ -51,7 +51,7 @@ func TestCreateChecksum(t *testing.T) {
 	t.Run("calcs checksum", func(t *testing.T) {
 	  got := CalcCheckSum("2333133121414131402")
 
-	  want := 1928
+	  want := 2858
 
 	  if got != want {
 	    t.Errorf("got %d, want %d", got, want)
