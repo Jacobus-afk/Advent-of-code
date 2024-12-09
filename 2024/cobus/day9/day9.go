@@ -28,13 +28,13 @@ func freeupSpacePerFile(blocksSlice []int) {
 	for {
 		if file := blocksSlice[backwards]; file == fileID {
 			fileID--
-			fmt.Println(backwards)
+			// fmt.Println(backwards)
 			if file == 1 {
 				break
 			}
 			fileSize := findSameValLength(backwards, file, -1, blocksSlice)
 			fileEnd := backwards - fileSize + 1
-			fmt.Println(fileSize)
+			// fmt.Println(fileSize)
 
 			for forwards := 0; forwards < fileEnd; forwards++ {
 				if blocksSlice[forwards] != -1 {
@@ -56,7 +56,7 @@ func freeupSpacePerFile(blocksSlice []int) {
 
 		backwards--
 	}
-	fmt.Println(blocksSlice)
+	// fmt.Println(blocksSlice)
 }
 
 // func freeupSpacePerFile(blocksSlice []int) {
@@ -172,11 +172,11 @@ func CalcCheckSum(diskMap string) int {
 	checkSum := 0
 
 	_, blocksSlice := translateDiskMap(diskMap)
-	fmt.Println(blocksSlice)
+	// fmt.Println(blocksSlice)
 	// freeUpSpaceFragmented(blocksSlice)
 	freeupSpacePerFile(blocksSlice)
 
-	fmt.Println(blocksSlice)
+	// fmt.Println(blocksSlice)
 	for pos, val := range blocksSlice {
 		if val == -1 {
 			continue
