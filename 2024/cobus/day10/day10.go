@@ -30,7 +30,7 @@ var PossibleDirections = [4][2]int{
 	{0, 1}, {1, 0}, {-1, 0}, {0, -1},
 }
 
-func chartPath(endMap map[[2]int]bool, height int, position [2]int, trail [][]int) {
+func chartPath(endMap map[[2]int]bool, height int, position [2]int, trail [][]int, rating *int) {
 	rowLen := len(trail)
 	colLen := len(trail[0])
 	for _, dir := range PossibleDirections {
@@ -44,9 +44,10 @@ func chartPath(endMap map[[2]int]bool, height int, position [2]int, trail [][]in
 		if trail[posy][posx] == height {
 			newPos := [2]int{posx, posy}
 			if height == 9 {
+        *rating += 1
 				endMap[newPos] = true
 			} else {
-				chartPath(endMap, height+1, newPos, trail)
+				chartPath(endMap, height+1, newPos, trail, rating)
 			}
 		}
 	}
@@ -54,17 +55,18 @@ func chartPath(endMap map[[2]int]bool, height int, position [2]int, trail [][]in
 
 func FindPath(trail [][]int) int {
 	tally := 0
+  rating := 0
 	for posy, line := range trail {
 		for posx, height := range line {
 			position := [2]int{posx, posy}
 			if height == 0 {
 				endMap := map[[2]int]bool{}
-				chartPath(endMap, height+1, position, trail)
-				// fmt.Println(endMap, len(endMap))
+				chartPath(endMap, height+1, position, trail, &rating)
 				tally += len(endMap)
 			}
 		}
 	}
+  fmt.Println(rating)
 	return tally
 }
 
