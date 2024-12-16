@@ -29,8 +29,8 @@ func blinkChecks(
 		}
 
 		return parts[0], parts[1]
-
 	}
+
 	answer, ok := multMemos[stone]
 	if !ok {
 		number, _ := strconv.Atoi(stone)
@@ -43,27 +43,52 @@ func blinkChecks(
 
 func Blinks(blinkCount int, stones []string) []string {
 	multMemos := map[string]string{}
-  splitMemos := map[string][2]string{}
-	for t := 0; t < blinkCount; t++ {
-		fmt.Println(t)
-		for i := 0; i < len(stones); i++ {
-      part1, part2 := blinkChecks(stones[i], multMemos, splitMemos)
-      stones[i] = part1
-      if part2 != "" {
-				stones = append(stones[:i+1], stones[i:]...)
-        stones[i+1] = part2
-        i++
-      }
-			// fmt.Println(stones)
+	splitMemos := map[string][2]string{}
 
+	stoneReg := []string{}
+
+	for pos := 0; pos < len(stones); pos++ {
+		tmpReg := []string{stones[pos]}
+		for count := 0; count < blinkCount; count++ {
+			fmt.Print(".")
+			for l := 0; l < len(tmpReg); l++ {
+				part1, part2 := blinkChecks(tmpReg[l], multMemos, splitMemos)
+				tmpReg[l] = part1
+				if part2 != "" {
+					tmpReg = append(tmpReg[:l+1], tmpReg[l:]...)
+					tmpReg[l+1] = part2
+					l++
+				}
+
+			}
 		}
+
+		fmt.Println(pos)
+		stoneReg = append(stoneReg, tmpReg...)
 	}
-	// fmt.Println(memoizations)
-	return stones
+
+	return stoneReg
+
+	// for t := 0; t < blinkCount; t++ {
+	// 	fmt.Println(t)
+	// 	for i := 0; i < len(stones); i++ {
+	// 		part1, part2 := blinkChecks(stones[i], multMemos, splitMemos)
+	// 		stones[i] = part1
+	// 		if part2 != "" {
+	// 			stones = append(stones[:i+1], stones[i:]...)
+	// 			stones[i+1] = part2
+	// 			i++
+	// 		}
+	// 		// fmt.Println(stones)
+	//
+	// 	}
+	// }
+	// // fmt.Println(memoizations)
+	// return stones
 }
 
 func main() {
-	stones := make([]string, 0, 9000000)
+	stones := []string{}
 	file, _ := os.Open("./data")
 	defer file.Close()
 
@@ -74,6 +99,6 @@ func main() {
 		stones = strings.Fields(line)
 	}
 
-	stoneReg := Blinks(25, stones)
+	stoneReg := Blinks(75, stones)
 	fmt.Println(len(stoneReg))
 }
