@@ -8,45 +8,62 @@ import (
 	"strings"
 )
 
-func Blinks(blinkCount int, stones []string) []string {
-	memoizations := map[string]string{}
-	for t := 0; t < blinkCount; t++ {
-		for i := 0; i < len(stones); i++ {
-			stoneLen := len(stones[i])
+func blinkChecks(
+	stone string,
+	multMemos map[string]string,
+	splitMemos map[string][2]string,
+) (string, string) {
+	if stone == "0" {
+		return "1", ""
+	}
+	if stoneLen := len(stone); stoneLen%2 == 0 {
+		parts, ok := splitMemos[stone]
+		if !ok {
 			halfStone := stoneLen / 2
-			if stones[i] == "0" {
-				stones[i] = "1"
-			} else if stoneLen%2 == 0 {
-				part1 := stones[i][:halfStone]
-				part2 := stones[i][halfStone:]
-				number, _ := strconv.Atoi(part2)
-				part2 = strconv.Itoa(number)
-				// fmt.Println(part1, part2)
+			part1 := stone[:halfStone]
+			part2 := stone[halfStone:]
+			number, _ := strconv.Atoi(part2)
+			part2 = strconv.Itoa(number)
+			parts = [2]string{part1, part2}
+			splitMemos[stone] = parts
+		}
 
-				stones[i] = part1
+		return parts[0], parts[1]
+
+	}
+	answer, ok := multMemos[stone]
+	if !ok {
+		number, _ := strconv.Atoi(stone)
+		multiplied := number * 2024
+		answer = strconv.Itoa(multiplied)
+		multMemos[stone] = answer
+	}
+	return answer, ""
+}
+
+func Blinks(blinkCount int, stones []string) []string {
+	multMemos := map[string]string{}
+  splitMemos := map[string][2]string{}
+	for t := 0; t < blinkCount; t++ {
+		fmt.Println(t)
+		for i := 0; i < len(stones); i++ {
+      part1, part2 := blinkChecks(stones[i], multMemos, splitMemos)
+      stones[i] = part1
+      if part2 != "" {
 				stones = append(stones[:i+1], stones[i:]...)
-				stones[i+1] = part2
-				i++
-			} else {
-				answer, ok := memoizations[stones[i]]
-				if !ok {
-          number, _ := strconv.Atoi(stones[i])
-          multiplied := number * 2024
-          answer = strconv.Itoa(multiplied)
-					memoizations[stones[i]] = answer
-				}
-				stones[i] = answer
-			}
+        stones[i+1] = part2
+        i++
+      }
 			// fmt.Println(stones)
 
 		}
 	}
-  fmt.Println(memoizations)
+	// fmt.Println(memoizations)
 	return stones
 }
 
 func main() {
-	stones := []string{}
+	stones := make([]string, 0, 9000000)
 	file, _ := os.Open("./data")
 	defer file.Close()
 
