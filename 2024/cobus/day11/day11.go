@@ -12,6 +12,10 @@ import (
 
 var mapMutex sync.RWMutex
 
+func multiplyby2024(num uint64) uint64 {
+  return (num << 11) - (num << 4) - (num << 3)
+}
+
 func blinkChecks(
 	stone string,
 	multMemos map[string]string,
@@ -45,7 +49,7 @@ func blinkChecks(
   mapMutex.RUnlock()
 	if !ok {
 		number, _ := strconv.ParseUint(stone, 10, 64)
-		multiplied := number * 2024
+		multiplied := multiplyby2024(number)
 		answer = strconv.FormatUint(multiplied, 10)
     mapMutex.Lock()
 		multMemos[stone] = answer
