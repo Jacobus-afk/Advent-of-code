@@ -9,39 +9,45 @@ import (
 )
 
 func Blinks(blinkCount int, stones []string) []string {
-	memoizations := map[string]string{}
+	// memoizations := map[string]string{}
+	// stoneCount := map[string]int{}
+
+	tally := 0
+  stoneMap := map[string]int{}
+  for _, stone := range stones {
+    stoneMap[stone]++
+  }
+
 	for t := 0; t < blinkCount; t++ {
-		for i := 0; i < len(stones); i++ {
-			stoneLen := len(stones[i])
-			halfStone := stoneLen / 2
-			if stones[i] == "0" {
-				stones[i] = "1"
-			} else if stoneLen%2 == 0 {
-				part1 := stones[i][:halfStone]
-				part2 := stones[i][halfStone:]
+		stoneReg := map[string]int{}
+		for stone, count := range stoneMap {
+			if stone == "0" {
+				stoneReg["1"]+=count
+			} else if len(stone)%2 == 0 {
+				half := len(stone) / 2
+				part1 := stone[:half]
+				part2 := stone[half:]
 				number, _ := strconv.Atoi(part2)
 				part2 = strconv.Itoa(number)
-				// fmt.Println(part1, part2)
-
-				stones[i] = part1
-				stones = append(stones[:i+1], stones[i:]...)
-				stones[i+1] = part2
-				i++
+				stoneReg[part1]+=count
+				stoneReg[part2]+=count
 			} else {
-				answer, ok := memoizations[stones[i]]
-				if !ok {
-          number, _ := strconv.Atoi(stones[i])
-          multiplied := number * 2024
-          answer = strconv.Itoa(multiplied)
-					memoizations[stones[i]] = answer
-				}
-				stones[i] = answer
+				number, _ := strconv.Atoi(stone)
+				multiplied := number * 2024
+				answer := strconv.Itoa(multiplied)
+				stoneReg[answer]+=count
 			}
-			// fmt.Println(stones)
-
 		}
+    // fmt.Println(stoneReg)
+    stoneMap = stoneReg
 	}
-  fmt.Println(memoizations)
+
+  for _, count := range stoneMap {
+    tally += count
+  }
+
+	fmt.Println(tally)
+
 	return stones
 }
 
@@ -57,6 +63,6 @@ func main() {
 		stones = strings.Fields(line)
 	}
 
-	stoneReg := Blinks(25, stones)
+	stoneReg := Blinks(75, stones)
 	fmt.Println(len(stoneReg))
 }
