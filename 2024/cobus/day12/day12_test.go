@@ -14,7 +14,7 @@ func TestGetTotalPrice(t *testing.T) {
 			"EEEC",
 		}
 
-		got := PlotGarden(garden)
+		got, _ := PlotGarden(garden)
 		// fmt.Println(plantMap)
 		want := 140
 
@@ -32,7 +32,7 @@ func TestGetTotalPrice(t *testing.T) {
 			"OOOOO",
 		}
 
-		got := PlotGarden(garden)
+		got, _ := PlotGarden(garden)
 		// fmt.Println(plantMap)
 		want := 772
 
@@ -55,7 +55,7 @@ func TestGetTotalPrice(t *testing.T) {
 			"MMMISSJEEE",
 		}
 
-		got := PlotGarden(garden)
+		got, _ := PlotGarden(garden)
 		// fmt.Println(plantMap)
 		want := 1930
 
