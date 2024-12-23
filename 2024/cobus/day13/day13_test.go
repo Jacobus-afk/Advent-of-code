@@ -1,6 +1,7 @@
 package main
 
 import (
+	// "fmt"
 	"reflect"
 	"testing"
 )
@@ -47,6 +48,7 @@ func TestFindPossiblePrizes(t *testing.T) {
 		machinesDetails := getMachineDetails(data)
 
 		permutations := findPrizePermutations(machinesDetails[0])
+	   // fmt.Println("got", permutations)
 		got := permutations[0]
 		want := [2]int{80, 40}
 
