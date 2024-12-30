@@ -1,12 +1,12 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"math"
-	"os"
 	"strconv"
 	"strings"
+
+  aoc "aoc-24/lib"
 )
 
 type Machine struct {
@@ -269,16 +269,7 @@ func FindPrizeCost(data []string) int {
 }
 
 func main() {
-	data := []string{}
-
-	file, _ := os.Open("./data")
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-		data = append(data, line)
-	}
+	data := aoc.ReadFileByLine("./data")
 
 	totalTokens := FindPossiblePrizes(data)
 	// totalTokens := FindPrizeCost(data)

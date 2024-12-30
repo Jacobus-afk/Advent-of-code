@@ -1,9 +1,9 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"os"
+
+  aoc "aoc-24/lib"
 )
 
 type RobotDetails struct {
@@ -180,16 +180,17 @@ func FindChristmasTree(seconds int, gridDimensions [2]int, robotsInitInfo []stri
 }
 
 func main() {
-	robotsInitInfo := []string{}
-
-	file, _ := os.Open("./data")
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-		robotsInitInfo = append(robotsInitInfo, line)
-	}
+	robotsInitInfo := aoc.ReadFileByLine("./data")
+	// robotsInitInfo := []string{}
+	//
+	// file, _ := os.Open("./data")
+	// defer file.Close()
+	//
+	// scanner := bufio.NewScanner(file)
+	// for scanner.Scan() {
+	// 	line := scanner.Text()
+	// 	robotsInitInfo = append(robotsInitInfo, line)
+	// }
 
   safetyFactor := CalculateSafetyFactor(100, [2]int{101,103}, robotsInitInfo)
   fmt.Println(safetyFactor)
