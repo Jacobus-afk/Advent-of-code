@@ -122,6 +122,63 @@ func CalculateSafetyFactor(seconds int, gridDimensions [2]int, robotsInitInfo []
 	return safetyFactor
 }
 
+func checkForTreeBottom(seconds int, grid [][]int) {
+  bottomCount := 0
+  for _, line := range grid {
+    bottomCount = 0
+    for _, entry := range line {
+      if entry == 0 {
+        bottomCount = 0
+      } else {
+        bottomCount++
+      }
+      if bottomCount > 10 {
+        for _, line := range grid {
+          for _, entry := range line {
+            if entry == 0 {
+              fmt.Print(".")
+            } else {
+              fmt.Print("#")
+            }
+          }
+          fmt.Println("")
+        }
+        fmt.Println(seconds + 1)
+        fmt.Println("")
+        return
+      }
+    }
+  }
+
+}
+
+func findPossibleTrees(seconds int, grid [][]int, robots []RobotDetails) {
+  for sec := range seconds {
+		for idx := range robots {
+			robot := &robots[idx]
+			posx := robot.position[0]
+			posy := robot.position[1]
+			velx := robot.velocity[0]
+			vely := robot.velocity[1]
+			grid[posy][posx]--
+
+			newposx, newposy := handleVelocity(posx, posy, velx, vely, len(grid[0]), len(grid))
+			robot.position = [2]int{newposx, newposy}
+			grid[newposy][newposx]++
+		}
+    gridCopy := make([][]int, len(grid))
+    copy(gridCopy, grid)
+    checkForTreeBottom(sec, gridCopy)
+	}
+
+}
+
+func FindChristmasTree(seconds int, gridDimensions [2]int, robotsInitInfo []string) {
+	grid := buildGrid(gridDimensions)
+	robots := positionRobots(grid, robotsInitInfo)
+  findPossibleTrees(seconds, grid, robots)
+}
+
 func main() {
 	robotsInitInfo := []string{}
 
@@ -136,4 +193,5 @@ func main() {
 
   safetyFactor := CalculateSafetyFactor(100, [2]int{101,103}, robotsInitInfo)
   fmt.Println(safetyFactor)
+  FindChristmasTree(1000000, [2]int{101,103}, robotsInitInfo)
 }
