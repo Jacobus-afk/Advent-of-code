@@ -49,9 +49,9 @@ func GetSafeReports(reportList [][]int) int {
 		} else {
 			for i := 0; i < len(report); i++ {
         poppedreport := make([]int, len(report))
-        _ = copy(poppedreport, report)
+        copy(poppedreport, report)
 				poppedreport = append(poppedreport[:i], poppedreport[i+1:]...)
-        // fmt.Printf("original report: %d, trying %d\n", report, poppedreport)
+        fmt.Printf("original report: %d, trying %d\n", report, poppedreport)
 				if incDecCheck(poppedreport) {
 					// fmt.Println("Safe")
 					safeReports++
