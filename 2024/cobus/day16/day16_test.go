@@ -27,6 +27,8 @@ func TestMazeCreation(t *testing.T) {
 
 		maze, _, _, dimensions := createMaze(data)
 
+    // fmt.Println(maze)
+
 		for posy := range dimensions[1] {
 			for posx := range dimensions[0] {
 				fmt.Print(maze[[2]int{posx, posy}])
@@ -93,18 +95,11 @@ func TestMazeCreation(t *testing.T) {
 
 		maze, start, end, dimensions := createMaze(data)
 
-    got := TraverseMaze(maze, start, end, dimensions)
-    want := 11048
+	   got := TraverseMaze(maze, start, end, dimensions)
+	   want := 11048
 
-    if got != want {
-      t.Errorf("got %d, want %d", got, want)
-    }
-
-		// for posy := range dimensions[1] {
-		//   for posx := range dimensions[0] {
-		//     fmt.Print(maze[[2]int{posx, posy}])
-		//   }
-		//   fmt.Println("")
-		// }
+	   if got != want {
+	     t.Errorf("got %d, want %d", got, want)
+	   }
 	})
 }
