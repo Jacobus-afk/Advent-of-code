@@ -116,7 +116,7 @@ func loopAttempt(start [2]int, maze map[[2]int]string) int {
     dsKey := [3]int{node.pos[0], node.pos[1], node.dir}
     dScore , exists := dirScores[dsKey]
     if exists {
-      if node.score > dScore {
+      if node.score >= dScore {
         continue
       }
     }
