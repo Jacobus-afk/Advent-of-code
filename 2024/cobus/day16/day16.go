@@ -14,18 +14,18 @@ var PossibleDirections = [4][2]int{
 
 func createMaze(data []string) (map[[2]int]string, [2]int, [2]int, [2]int) {
 	maze := map[[2]int]string{}
-	start := [2]int{-1, -1}
-	end := [2]int{-1, -1}
-	dimensions := [2]int{len(data[0]), len(data)}
+	start := [2]int{1, 1}
+	end := [2]int{1, 1}
+	dimensions := [2]int{int(len(data[0])), int(len(data))}
 
 	for posy, line := range data {
 		for posx, char := range line {
-			maze[[2]int{posx, posy}] = string(char)
+			maze[[2]int{int(posx), int(posy)}] = string(char)
 			if char == 'S' {
-				start = [2]int{posx, posy}
+				start = [2]int{int(posx), int(posy)}
 			}
 			if char == 'E' {
-				end = [2]int{posx, posy}
+				end = [2]int{int(posx), int(posy)}
 			}
 		}
 	}
@@ -86,7 +86,7 @@ type Node struct {
 	dir   int
 	pos   [2]int
 	score int
-	path  [][2]int
+	path  [][3]int
 }
 
 func dirPresent(dirs [][2]int, dir [2]int) bool {
@@ -107,14 +107,15 @@ func loopAttempt(start [2]int, maze map[[2]int]string) (int, []Node) {
 
 	for len(nodeList) > 0 {
 		node, nodeList = nodeList[0], nodeList[1:]
-    fmt.Println("got node", node.pos, node.dir, node.score)
+		// fmt.Println("got node", node.pos, node.dir, node.score)
+		// fmt.Println("trying node", node)
 
 		dir := PossibleDirections[node.dir]
 
 		dsKey := [3]int{node.pos[0], node.pos[1], node.dir}
 		dScore, exists := dirScores[dsKey]
 		if exists {
-			if node.score > dScore {
+			if node.score > int(dScore) {
 				continue
 			}
 		}
@@ -126,7 +127,6 @@ func loopAttempt(start [2]int, maze map[[2]int]string) (int, []Node) {
 			continue
 		}
 
-    // fmt.Println("trying node", node.pos, node.dir, node.score)
 
 		currNode := node
 		if currBlock == "E" {
@@ -134,12 +134,17 @@ func loopAttempt(start [2]int, maze map[[2]int]string) (int, []Node) {
 			possiblePaths = append(possiblePaths, currNode)
 			continue
 		}
-    fmt.Println("trying approved node", currNode)
-    fmt.Println("")
+		// fmt.Println("handling approved node", currNode)
+		//   fmt.Println(nodeList)
 
-    currNodePath := currNode.path
-		updatedNodePath := append(currNode.path, currNode.pos)
-		newPos := [2]int{node.pos[0] + dir[0], node.pos[1] + dir[1]}
+		// currNodePath := currNode.path
+    currNodePath := append([][3]int(nil), currNode.path...)
+		updatedNodePath := append(
+			currNode.path,
+			[3]int{currNode.pos[0], currNode.pos[1], currNode.dir},
+		)
+    // fmt.Println(nodeList)
+		newPos := [2]int{node.pos[0] + int(dir[0]), node.pos[1] + int(dir[1])}
 		newNode := Node{
 			dir:   node.dir,
 			pos:   newPos,
@@ -158,7 +163,13 @@ func loopAttempt(start [2]int, maze map[[2]int]string) (int, []Node) {
 			score: node.score + 1000,
 			path:  currNodePath,
 		}
+		// fmt.Println("newNode", newNode)
+		// fmt.Println("newNode90", newNode90)
+		// fmt.Println("newNode270", newNode270)
 		nodeList = append(nodeList, newNode, newNode90, newNode270)
+		//   fmt.Println(nodeList)
+		// fmt.Println("")
+		// fmt.Println("")
 
 	}
 	minScore := math.MaxInt64
@@ -188,17 +199,17 @@ func TraverseMaze(maze map[[2]int]string, start, end, dimensions [2]int) int {
 			continue
 		}
 		for _, path := range pathMap.path {
-			pathTally[path] = true
-      maze[path] = "O"
+			pathTally[[2]int{path[0], path[1]}] = true
+			maze[[2]int{path[0], path[1]}] = "O"
 		}
 	}
 
-  for posy := range dimensions[1] {
-    for posx := range dimensions[0] {
-      fmt.Print(maze[[2]int{posx, posy}])
-    }
-    fmt.Println("")
-  }
+	for posy := range dimensions[1] {
+		for posx := range dimensions[0] {
+			fmt.Print(maze[[2]int{posx, posy}])
+		}
+		fmt.Println("")
+	}
 
 	fmt.Println(len(pathTally) + 1)
 
@@ -226,7 +237,6 @@ func main() {
 	maze, start, end, dimensions := createMaze(data)
 
 	minScore := TraverseMaze(maze, start, end, dimensions)
-
 
 	fmt.Println(minScore)
 }
