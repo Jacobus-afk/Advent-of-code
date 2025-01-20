@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 	"reflect"
+	// "sort"
 )
 
 var PossibleDirections = [4][2]int{
@@ -106,6 +107,7 @@ func loopAttempt(start [2]int, maze map[[2]int]string) (int, []Node) {
 
 	for len(nodeList) > 0 {
 		node, nodeList = nodeList[0], nodeList[1:]
+    fmt.Println("got node", node.pos, node.dir, node.score)
 
 		dir := PossibleDirections[node.dir]
 
@@ -124,32 +126,37 @@ func loopAttempt(start [2]int, maze map[[2]int]string) (int, []Node) {
 			continue
 		}
 
+    // fmt.Println("trying node", node.pos, node.dir, node.score)
+
 		currNode := node
 		if currBlock == "E" {
 			possibleScores = append(possibleScores, node.score)
 			possiblePaths = append(possiblePaths, currNode)
 			continue
 		}
+    fmt.Println("trying approved node", currNode)
+    fmt.Println("")
 
-		currNodePath := append(currNode.path, currNode.pos)
+    currNodePath := currNode.path
+		updatedNodePath := append(currNode.path, currNode.pos)
 		newPos := [2]int{node.pos[0] + dir[0], node.pos[1] + dir[1]}
 		newNode := Node{
 			dir:   node.dir,
 			pos:   newPos,
 			score: node.score + 1,
-			path:  currNodePath,
+			path:  updatedNodePath,
 		}
 		newNode90 := Node{
 			dir:   (node.dir + 1) % 4,
 			pos:   node.pos,
 			score: node.score + 1000,
-			path:  node.path,
+			path:  currNodePath,
 		}
 		newNode270 := Node{
 			dir:   (node.dir + 3) % 4,
 			pos:   node.pos,
 			score: node.score + 1000,
-			path:  node.path,
+			path:  currNodePath,
 		}
 		nodeList = append(nodeList, newNode, newNode90, newNode270)
 
@@ -182,9 +189,33 @@ func TraverseMaze(maze map[[2]int]string, start, end, dimensions [2]int) int {
 		}
 		for _, path := range pathMap.path {
 			pathTally[path] = true
+      maze[path] = "O"
 		}
 	}
+
+  for posy := range dimensions[1] {
+    for posx := range dimensions[0] {
+      fmt.Print(maze[[2]int{posx, posy}])
+    }
+    fmt.Println("")
+  }
+
 	fmt.Println(len(pathTally) + 1)
+
+	// keys := make([][2]int, 0, len(pathTally))
+	// for k := range pathTally {
+	// 	keys = append(keys, k)
+	// }
+	// sort.Slice(keys, func(i, j int) bool {
+	// 	if keys[i][0] != keys[j][0] {
+	// 		return keys[i][0] < keys[j][0]
+	// 	}
+	// 	// If the first elements are equal, sort by the second element
+	// 	return keys[i][1] < keys[j][1]
+	// })
+	// for _, k := range keys {
+	// 	fmt.Printf("[%d, %d]\n", k[0], k[1])
+	// }
 
 	return minScore
 }
@@ -195,6 +226,7 @@ func main() {
 	maze, start, end, dimensions := createMaze(data)
 
 	minScore := TraverseMaze(maze, start, end, dimensions)
+
 
 	fmt.Println(minScore)
 }
