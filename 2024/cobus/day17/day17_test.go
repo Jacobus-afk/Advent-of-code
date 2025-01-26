@@ -7,7 +7,6 @@ import (
 )
 
 func TestComputerInit(t *testing.T) {
-
 	t.Run("test bst", func(t *testing.T) {
 		data := []string{
 			"Register A: 0",
@@ -17,9 +16,9 @@ func TestComputerInit(t *testing.T) {
 			"Program: 2,6",
 		}
 
-    computer := initComputer(data)
-    runInstructions(&computer)
-    fmt.Println(computer)
+		computer := initComputer(data)
+		RunInstructions(&computer)
+		fmt.Println(computer)
 	})
 
 	t.Run("test out", func(t *testing.T) {
@@ -31,14 +30,14 @@ func TestComputerInit(t *testing.T) {
 			"Program: 5,0,5,1,5,4",
 		}
 
-    computer := initComputer(data)
-    got := runInstructions(&computer)
-    fmt.Println(computer)
-    want := []int{0,1,2}
+		computer := initComputer(data)
+		got := RunInstructions(&computer)
+		fmt.Println(computer)
+		want := []int{0, 1, 2}
 
-    if !reflect.DeepEqual(got, want) {
-      t.Errorf("got %d, want %d", got, want)
-    }
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("got %d, want %d", got, want)
+		}
 	})
 
 	t.Run("test multiple", func(t *testing.T) {
@@ -50,14 +49,14 @@ func TestComputerInit(t *testing.T) {
 			"Program: 0,1,5,4,3,0",
 		}
 
-    computer := initComputer(data)
-    got := runInstructions(&computer)
-    fmt.Println(computer)
-    want := []int{4,2,5,6,7,7,7,7,3,1,0}
+		computer := initComputer(data)
+		got := RunInstructions(&computer)
+		fmt.Println(computer)
+		want := []int{4, 2, 5, 6, 7, 7, 7, 7, 3, 1, 0}
 
-    if !reflect.DeepEqual(got, want) {
-      t.Errorf("got %d, want %d", got, want)
-    }
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("got %d, want %d", got, want)
+		}
 	})
 
 	t.Run("test bxl", func(t *testing.T) {
@@ -69,14 +68,14 @@ func TestComputerInit(t *testing.T) {
 			"Program: 1,7",
 		}
 
-    computer := initComputer(data)
-    runInstructions(&computer)
-    fmt.Println(computer)
-    // want := []int{4,2,5,6,7,7,7,7,3,1,0}
+		computer := initComputer(data)
+		RunInstructions(&computer)
+		fmt.Println(computer)
+		// want := []int{4,2,5,6,7,7,7,7,3,1,0}
 
-    // if !reflect.DeepEqual(got, want) {
-    //   t.Errorf("got %d, want %d", got, want)
-    // }
+		// if !reflect.DeepEqual(got, want) {
+		//   t.Errorf("got %d, want %d", got, want)
+		// }
 	})
 
 	t.Run("test bxc", func(t *testing.T) {
@@ -88,14 +87,14 @@ func TestComputerInit(t *testing.T) {
 			"Program: 4,0",
 		}
 
-    computer := initComputer(data)
-    runInstructions(&computer)
-    fmt.Println(computer)
-    // want := []int{4,2,5,6,7,7,7,7,3,1,0}
+		computer := initComputer(data)
+		RunInstructions(&computer)
+		fmt.Println(computer)
+		// want := []int{4,2,5,6,7,7,7,7,3,1,0}
 
-    // if !reflect.DeepEqual(got, want) {
-    //   t.Errorf("got %d, want %d", got, want)
-    // }
+		// if !reflect.DeepEqual(got, want) {
+		//   t.Errorf("got %d, want %d", got, want)
+		// }
 	})
 
 	t.Run("More complex ex", func(t *testing.T) {
@@ -107,35 +106,37 @@ func TestComputerInit(t *testing.T) {
 			"Program: 0,1,5,4,3,0",
 		}
 
-    computer := initComputer(data)
-    got := runInstructions(&computer)
+		computer := initComputer(data)
+		got := RunInstructions(&computer)
 
-    want := []int{4,6,3,5,6,3,5,2,1,0}
+		want := []int{4, 6, 3, 5, 6, 3, 5, 2, 1, 0}
 
-    if !reflect.DeepEqual(got, want) {
-      t.Errorf("got %d, want %d", got, want)
-    }
-    // fmt.Println(computer)
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("got %d, want %d", got, want)
+		}
+		// fmt.Println(computer)
 	})
+}
 
+func TestFindProgramCopy(t *testing.T) {
 	t.Run("Trying to understand part2", func(t *testing.T) {
 		data := []string{
-			"Register A: 117440",
+			"Register A: 2024",
 			"Register B: 0",
 			"Register C: 0",
 			"",
 			"Program: 0,3,5,4,3,0",
 		}
 
-    computer := initComputer(data)
-    output := runInstructions(&computer)
+		computer := initComputer(data)
+		// output := RunInstructions(&computer)
+    got := FindProgramCopy(&computer)
+    want := 117440
 
-    // want := []int{4,6,3,5,6,3,5,2,1,0}
+    if got != want {
+      t.Errorf("got %d, want %d", got, want)
+    }
 
-    // if !reflect.DeepEqual(got, want) {
-    //   t.Errorf("got %d, want %d", got, want)
-    // }
-    fmt.Println(computer, output)
+		fmt.Println(computer)
 	})
-
 }
