@@ -33,7 +33,7 @@ func TestComputerInit(t *testing.T) {
 		computer := initComputer(data)
 		got := RunInstructions(&computer)
 		fmt.Println(computer)
-		want := []int{0, 1, 2}
+		want := []uint8{0, 1, 2}
 
 		if !reflect.DeepEqual(got, want) {
 			t.Errorf("got %d, want %d", got, want)
@@ -52,7 +52,7 @@ func TestComputerInit(t *testing.T) {
 		computer := initComputer(data)
 		got := RunInstructions(&computer)
 		fmt.Println(computer)
-		want := []int{4, 2, 5, 6, 7, 7, 7, 7, 3, 1, 0}
+		want := []uint8{4, 2, 5, 6, 7, 7, 7, 7, 3, 1, 0}
 
 		if !reflect.DeepEqual(got, want) {
 			t.Errorf("got %d, want %d", got, want)
@@ -109,7 +109,7 @@ func TestComputerInit(t *testing.T) {
 		computer := initComputer(data)
 		got := RunInstructions(&computer)
 
-		want := []int{4, 6, 3, 5, 6, 3, 5, 2, 1, 0}
+		want := []uint8{4, 6, 3, 5, 6, 3, 5, 2, 1, 0}
 
 		if !reflect.DeepEqual(got, want) {
 			t.Errorf("got %d, want %d", got, want)
@@ -130,13 +130,36 @@ func TestFindProgramCopy(t *testing.T) {
 
 		computer := initComputer(data)
 		// output := RunInstructions(&computer)
-    got := FindProgramCopy(&computer)
+    // got := FindProgramCopy(&computer)
+    got := FindProgramCopyReverse(&computer)
     want := 117440
 
-    if got != want {
+    if got == want {
       t.Errorf("got %d, want %d", got, want)
     }
 
 		fmt.Println(computer)
+	})
+
+	t.Run("Trying to understand part2", func(t *testing.T) {
+		data := []string{
+			"Register A: 73920",
+			"Register B: 0",
+			"Register C: 0",
+			"",
+			"Program: 0,3,5,4,3,0",
+		}
+
+		computer := initComputer(data)
+		output := RunInstructions(&computer)
+    // got := FindProgramCopy(&computer)
+    // got := FindProgramCopyReverse(&computer)
+    // want := 117440
+
+    // if got != want {
+    //   t.Errorf("got %d, want %d", got, want)
+    // }
+
+		fmt.Println(computer, output)
 	})
 }
