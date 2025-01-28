@@ -19,7 +19,7 @@ type Computer struct {
 	registerB int
 	registerC int
 
-	program map[int8]Instruction
+	program map[int]Instruction
 }
 
 func translateOperand(computer Computer, operand int) int {
@@ -27,7 +27,7 @@ func translateOperand(computer Computer, operand int) int {
 	case 0, 1, 2, 3:
 		return operand
 	case 4:
-		return int(computer.registerA)
+		return computer.registerA
 	case 5:
 		return computer.registerB
 	case 6:
@@ -86,7 +86,7 @@ func out(computer Computer, operand int) int {
 	return combo & 0b111
 }
 
-func handleInstruction(computer *Computer, instruction Instruction, output *[]int) int8 {
+func handleInstruction(computer *Computer, instruction Instruction, output *[]int) int {
 	switch instruction.opcode {
 	case 0:
 		adv(computer, instruction.operand)
@@ -98,7 +98,7 @@ func handleInstruction(computer *Computer, instruction Instruction, output *[]in
 		if computer.registerA != 0 {
 			// instrCtr = instruction.operand
 			// continue
-			return int8(instruction.operand)
+			return int(instruction.operand)
 		}
 	case 4:
 		bxc(computer)
@@ -115,8 +115,8 @@ func handleInstruction(computer *Computer, instruction Instruction, output *[]in
 
 func RunInstructions(computer *Computer) []int {
 	output := []int{}
-	progLen := int8(len(computer.program) * 2)
-	var instrCtr int8
+	progLen := int(len(computer.program) * 2)
+	var instrCtr int
 
 	for instrCtr < progLen {
 		instruction := computer.program[instrCtr]
@@ -130,11 +130,10 @@ func RunInstructions(computer *Computer) []int {
 	return output
 }
 
-func runToNextOutputInstruction(computer *Computer, outputInstruction int8) bool {
+func runToNextOutputInstruction(computer *Computer, outputInstruction int) bool {
 	output := []int{}
-	progLen := int8(len(computer.program) * 2)
-	var instrCtr int8
-	// fmt.Println("trying computer", computer)
+	progLen := int(len(computer.program) * 2)
+	var instrCtr int
 
 	for instrCtr < progLen {
 		instruction := computer.program[instrCtr]
@@ -154,8 +153,6 @@ func runToNextOutputInstruction(computer *Computer, outputInstruction int8) bool
 		instrCtr += 2
 	}
 
-	// fmt.Println("trying output", output)
-
 	if len(output) == 2 &&
 		output[1] == computer.program[outputInstruction].operand {
 		return true
@@ -165,19 +162,18 @@ func runToNextOutputInstruction(computer *Computer, outputInstruction int8) bool
 }
 
 func FindProgramCopy(computer *Computer) int {
-	// regACtr := 90065166
 	regACtr := 1
 	regB := computer.registerB
 	regC := computer.registerC
 	allOutputInstructionsValid := false
-	progLen := int8(len(computer.program) * 2)
+	progLen := int(len(computer.program) * 2)
 	fmt.Println(progLen)
 	for {
 		computer.registerA = regACtr
 		computer.registerB = regB
 		computer.registerC = regC
 
-		for i := int8(0); i < progLen; i += 2 {
+		for i := int(0); i < progLen; i += 2 {
 			if validInstruction := runToNextOutputInstruction(computer, i); !validInstruction {
 				allOutputInstructionsValid = false
 				break
@@ -194,44 +190,21 @@ func FindProgramCopy(computer *Computer) int {
 	return regACtr
 }
 
-// func findNextValidInstruction(computer *Computer, outputInstruction int8, seed int) bool {
-// 	if runToNextOutputInstruction(computer, outputInstruction) && computer.registerA == seed {
-// 		return true
-// 	}
-// 	return false
-// }
-
 func stepThroughInstructions(
 	computer *Computer,
-	currentInstruction int8,
+	currentInstruction int,
 	seed, counter, ctrInc int,
 	halt map[string]bool,
 ) {
-	// foundValidInstruction := false
-	// noMoreValidInstructions := false
-	// regA := computer.registerA
-	// regB := computer.registerB
-	// regC := computer.registerC
-
 	if currentInstruction < 0 || halt["halt"] {
 		return
 	}
-	// for i := currentInstruction; i >= 0; i -= 2 {
+
 	for {
 		computer.registerA = counter
 		computer.registerB = 0
 		computer.registerC = 0
-		// computer.registerB = regB
-		// computer.registerC = regC
-		// fmt.Println("trying", currentInstruction, computer, counter)
 		if runToNextOutputInstruction(computer, currentInstruction) {
-			// fmt.Println(
-			// 	"found possible instruction for",
-			// 	currentInstruction,
-			// 	"seed",
-			// 	seed,
-			// 	computer,
-			// )
 			if computer.registerA == seed {
 				fmt.Println(
 					"found valid instruction for",
@@ -243,10 +216,10 @@ func stepThroughInstructions(
 					computer,
 				)
 				fmt.Printf("%b\n", int64(counter))
-        fmt.Println("")
+				fmt.Println("")
 				if currentInstruction == 0 {
 					fmt.Println("found valid regA value", counter)
-          fmt.Println("")
+					fmt.Println("")
 					computer.registerA = counter
 					halt["halt"] = true
 					return
@@ -260,81 +233,26 @@ func stepThroughInstructions(
 					halt,
 				)
 			} else if computer.registerA > seed {
-        fmt.Println("register value too big for", currentInstruction, seed, computer )
+				fmt.Println("register value too big for", currentInstruction, seed, computer)
 				break
 			}
 		}
 		counter += ctrInc
 	}
-
-	// }
 }
 
 func FindProgramCopyReverse(computer *Computer) int {
-	progLen := int8(len(computer.program) * 2)
+	progLen := int(len(computer.program) * 2)
 	halt := map[string]bool{"halt": false}
 
-	// for regB := int(0); regB < 8; regB++ {
-	// 	for regC := int(0); regC < 8; regC++ {
-	//      computer.registerB = regB
-	//      computer.registerC = regC
 	stepThroughInstructions(computer, progLen-2, 0, 1, 1, halt)
-	// 	}
-	// }
-	// fmt.Println("")
-	// fmt.Println(computer)
-
-	// regACtr := 1
-	//  tmpCtr := regACtr
-	// regB := computer.registerB
-	// regC := computer.registerC
-	// // allOutputInstructionsValid := false
-	// outputInstrValid := false
-	// progLen := int8(len(computer.program) * 2)
-	// for {
-	// 	endVal := 0
-	// 	tmpCtr = regACtr
-	//    fmt.Println("starting regACtr at", regACtr)
-	// 	for i := progLen - 2; i >= 0; i -= 2 {
-	// 		outputInstrValid = false
-	// 		for {
-	// 			computer.registerA = tmpCtr
-	// 			computer.registerB = regB
-	// 			computer.registerC = regC
-	// 			if runToNextOutputInstruction(computer, i) {
-	// 				if computer.registerA == endVal {
-	//            fmt.Println("passed instruction", i, computer, tmpCtr)
-	// 					outputInstrValid = true
-	// 					break
-	// 				} else if computer.registerA > endVal {
-	// 					fmt.Println("instruction", i, "broke because regA > endVal", computer.registerA, endVal)
-	//            regACtr = endVal
-	// 					break
-	// 				}
-	// 			}
-	// 			tmpCtr += 1
-	// 		}
-	// 		if outputInstrValid {
-	// 			endVal = tmpCtr
-	// 			continue
-	// 		}
-	// 		break
-	// 	}
-	//
-	// 	if outputInstrValid {
-	// 		break
-	// 	}
-	// 	regACtr++
-	//
-	// }
-	// return regACtr
 	return computer.registerA
 }
 
 func initComputer(data []string) Computer {
 	var regA, regB, regC int
 	var prog string
-	instrMap := map[int8]Instruction{}
+	instrMap := map[int]Instruction{}
 
 	fmt.Sscanf(data[0], "Register A: %d", &regA)
 	fmt.Sscanf(data[1], "Register B: %d", &regB)
@@ -342,9 +260,9 @@ func initComputer(data []string) Computer {
 	fmt.Sscanf(data[4], "Program: %s", &prog)
 
 	instrStr := strings.Split(prog, ",")
-	instrLen := int8(len(instrStr))
+	instrLen := int(len(instrStr))
 
-	for i := int8(0); i < instrLen; i += 2 {
+	for i := int(0); i < instrLen; i += 2 {
 		opcode, _ := strconv.Atoi(instrStr[i])
 		operand, _ := strconv.Atoi(instrStr[i+1])
 		instrMap[i] = Instruction{opcode: int(opcode), operand: int(operand)}
