@@ -134,6 +134,7 @@ func runToNextOutputInstruction(computer *Computer, outputInstruction int8) bool
 	output := []uint8{}
 	progLen := int8(len(computer.program) * 2)
 	var instrCtr int8
+	// fmt.Println("trying computer", computer)
 
 	for instrCtr < progLen {
 		instruction := computer.program[instrCtr]
@@ -147,6 +148,8 @@ func runToNextOutputInstruction(computer *Computer, outputInstruction int8) bool
 		}
 		instrCtr += 2
 	}
+
+	// fmt.Println("trying output", output)
 
 	if len(output) == 2 && output[0] == computer.program[outputInstruction].opcode &&
 		output[1] == computer.program[outputInstruction].operand {
@@ -186,51 +189,132 @@ func FindProgramCopy(computer *Computer) int {
 	return regACtr
 }
 
-func FindProgramCopyReverse(computer *Computer) int {
-	regACtr := 1
-  tmpCtr := regACtr
-	regB := computer.registerB
-	regC := computer.registerC
-	// allOutputInstructionsValid := false
-	outputInstrValid := false
-	progLen := int8(len(computer.program) * 2)
-	for {
-		endVal := 0
-		tmpCtr = regACtr
-    fmt.Println("starting regACtr at", regACtr)
-		for i := progLen - 2; i >= 0; i -= 2 {
-			outputInstrValid = false
-			for {
-				computer.registerA = tmpCtr
-				computer.registerB = regB
-				computer.registerC = regC
-				if runToNextOutputInstruction(computer, i) {
-					if computer.registerA == endVal {
-            fmt.Println("passed instruction", i, computer, tmpCtr)
-						outputInstrValid = true
-						break
-					} else if computer.registerA > endVal {
-						fmt.Println("instruction", i, "broke because regA > endVal", computer.registerA, endVal)
-            regACtr = endVal
-						break
-					}
-				}
-				tmpCtr += 1
-			}
-			if outputInstrValid {
-				endVal = tmpCtr
-				continue
-			}
-			break
-		}
+// func findNextValidInstruction(computer *Computer, outputInstruction int8, seed int) bool {
+// 	if runToNextOutputInstruction(computer, outputInstruction) && computer.registerA == seed {
+// 		return true
+// 	}
+// 	return false
+// }
 
-		if outputInstrValid {
-			break
-		}
-		regACtr++
+func stepThroughInstructions(
+	computer *Computer,
+	currentInstruction int8,
+	seed, counter, ctrInc int,
+) {
+	// foundValidInstruction := false
+	// noMoreValidInstructions := false
+	// regA := computer.registerA
+	// regB := computer.registerB
+	// regC := computer.registerC
 
+	if currentInstruction < 0 {
+		return
 	}
-	return regACtr
+	// for i := currentInstruction; i >= 0; i -= 2 {
+	for {
+		computer.registerA = counter
+		computer.registerB = 0
+		computer.registerC = 0
+		// computer.registerB = regB
+		// computer.registerC = regC
+		// fmt.Println("trying", computer)
+		if runToNextOutputInstruction(computer, currentInstruction) {
+			// fmt.Println(
+			// 	"found possible instruction for",
+			// 	currentInstruction,
+			// 	"seed",
+			// 	seed,
+			// 	computer,
+			// )
+			if computer.registerA == seed {
+				fmt.Println(
+					"found valid instruction for",
+					currentInstruction,
+					"counter",
+					counter,
+					computer,
+				)
+				fmt.Printf("%b\n", int64(counter))
+				if currentInstruction == 0 {
+					fmt.Println("found valid regA value", counter)
+					computer.registerA = counter
+					return
+				}
+				stepThroughInstructions(
+					computer,
+					currentInstruction-2,
+					counter,
+					counter<<6,
+					1,
+				)
+			} else if computer.registerA > seed {
+				break
+			}
+		}
+		counter += ctrInc
+	}
+
+	// }
+}
+
+func FindProgramCopyReverse(computer *Computer) int {
+	progLen := int8(len(computer.program) * 2)
+
+	// for regB := uint8(0); regB < 8; regB++ {
+	// 	for regC := uint8(0); regC < 8; regC++ {
+	//      computer.registerB = regB
+	//      computer.registerC = regC
+	stepThroughInstructions(computer, progLen-2, 0, 1, 1)
+	// 	}
+	// }
+	// fmt.Println("")
+	// fmt.Println(computer)
+
+	// regACtr := 1
+	//  tmpCtr := regACtr
+	// regB := computer.registerB
+	// regC := computer.registerC
+	// // allOutputInstructionsValid := false
+	// outputInstrValid := false
+	// progLen := int8(len(computer.program) * 2)
+	// for {
+	// 	endVal := 0
+	// 	tmpCtr = regACtr
+	//    fmt.Println("starting regACtr at", regACtr)
+	// 	for i := progLen - 2; i >= 0; i -= 2 {
+	// 		outputInstrValid = false
+	// 		for {
+	// 			computer.registerA = tmpCtr
+	// 			computer.registerB = regB
+	// 			computer.registerC = regC
+	// 			if runToNextOutputInstruction(computer, i) {
+	// 				if computer.registerA == endVal {
+	//            fmt.Println("passed instruction", i, computer, tmpCtr)
+	// 					outputInstrValid = true
+	// 					break
+	// 				} else if computer.registerA > endVal {
+	// 					fmt.Println("instruction", i, "broke because regA > endVal", computer.registerA, endVal)
+	//            regACtr = endVal
+	// 					break
+	// 				}
+	// 			}
+	// 			tmpCtr += 1
+	// 		}
+	// 		if outputInstrValid {
+	// 			endVal = tmpCtr
+	// 			continue
+	// 		}
+	// 		break
+	// 	}
+	//
+	// 	if outputInstrValid {
+	// 		break
+	// 	}
+	// 	regACtr++
+	//
+	// }
+	// return regACtr
+	return computer.registerA
 }
 
 func initComputer(data []string) Computer {
@@ -270,9 +354,11 @@ func main() {
 	for _, entry := range output {
 		fmt.Printf("%d,", entry)
 	}
+	fmt.Println("")
+	fmt.Println(computer)
 
 	computer.registerB = regB
 	computer.registerC = regC
-	copyComp := FindProgramCopy(&computer)
+	copyComp := FindProgramCopyReverse(&computer)
 	fmt.Println(copyComp)
 }

@@ -143,7 +143,7 @@ func TestFindProgramCopy(t *testing.T) {
 
 	t.Run("Trying to understand part2", func(t *testing.T) {
 		data := []string{
-			"Register A: 73920",
+			"Register A: 117440",
 			"Register B: 0",
 			"Register C: 0",
 			"",
